@@ -144,7 +144,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onClose, onSucces
                     alt="Aperçu"
                     className="w-20 h-20 object-cover rounded-lg"
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
+                      const target = e.currentTarget;
+                      target.style.display = 'none';
                     }}
                   />
                 </div>

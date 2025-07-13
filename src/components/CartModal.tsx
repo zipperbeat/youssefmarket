@@ -85,6 +85,7 @@ const CartModal: React.FC<CartModalProps> = ({ onClose, onCheckout }) => {
                     onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
                     className="p-1 hover:bg-gray-100 rounded"
                     disabled={item.quantity <= 1}
+                    aria-label="Decrease quantity"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -92,6 +93,7 @@ const CartModal: React.FC<CartModalProps> = ({ onClose, onCheckout }) => {
                   <button
                     onClick={() => updateCartQuantity(item.product.id, item.quantity + 1)}
                     className="p-1 hover:bg-gray-100 rounded"
+                    aria-label="Increase quantity"
                   >
                     <Plus className="w-4 h-4" />
                   </button>

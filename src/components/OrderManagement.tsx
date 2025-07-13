@@ -104,8 +104,8 @@ const OrderManagement: React.FC = () => {
       color: 'text-yellow-600'
     },
     {
-      title: 'Revenus Total',
-      value: formatPrice(orders.reduce((sum, order) => sum + order.totalAmount, 0)),
+      title: t('admin.totalRevenue'),
+      value: formatPrice(orders.filter(o => o.status === 'delivered').reduce((sum, order) => sum + order.totalAmount, 0)),
       icon: CheckCircle,
       color: 'text-green-600'
     }

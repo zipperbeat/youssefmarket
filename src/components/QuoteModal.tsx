@@ -3,6 +3,7 @@ import { X, MessageCircle, Phone, Mail } from 'lucide-react';
 import { Product } from '../types';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface QuoteModalProps {
   product: Product;
@@ -11,6 +12,7 @@ interface QuoteModalProps {
 
 const QuoteModal: React.FC<QuoteModalProps> = ({ product, onClose }) => {
   const { t } = useLanguage();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,6 +23,8 @@ const QuoteModal: React.FC<QuoteModalProps> = ({ product, onClose }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
     // In a real app, this would send the quote request to the backend
     
     // For demo purposes, always show success
@@ -30,6 +34,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({ product, onClose }) => {
         onClose();
         // Show success message
         console.log('Quote request submitted (demo mode):', formData);
+        alert(t('quote.success'));
       }, 1000);
       return;
     }
@@ -37,6 +42,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({ product, onClose }) => {
     
     // For demo purposes, show success message
     alert(t('quote.success'));
+    setIsSubmitting(false);
     onClose();
   };
 
@@ -146,10 +152,11 @@ const QuoteModal: React.FC<QuoteModalProps> = ({ product, onClose }) => {
             <div className="flex space-x-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 bg-emerald-600 text-white py-3 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center space-x-2"
+                disabled={isSubmitting}
+                className="flex-1 bg-emerald-600 text-white py-3 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <Mail className="w-4 h-4" />
-                <span>{t('quote.send')}</span>
+                <span>{isSubmitting ? t('common.loading') : t('quote.send')}</span>
               </button>
               <button
                 type="button"

@@ -9,6 +9,8 @@ const CategoryGrid: React.FC = () => {
   const handleCategoryClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
     setSearchQuery('');
+    // Navigate to catalog view if we're not already there
+    window.location.hash = '#catalog';
   };
 
   if (loading) {

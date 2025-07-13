@@ -22,9 +22,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestQuote, onAd
         title: product.name,
         text: product.description,
         url: window.location.href
-      });
+      }).catch(console.error);
     } else {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          // Could show a toast notification here
+          console.log('Link copied to clipboard');
+        })
+        .catch(console.error);
     }
   };
 

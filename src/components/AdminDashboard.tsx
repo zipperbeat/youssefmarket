@@ -97,10 +97,11 @@ const AdminDashboard: React.FC = () => {
         ? t('message.productUpdated')
         : editingCategory 
         ? t('message.categoryUpdated')
-        : editingProduct === undefined && editingCategory === undefined
+        : showProductForm
         ? t('message.productAdded')
         : t('message.categoryAdded')
     });
+    setTimeout(() => setToast(null), 3000);
   };
 
   const handleCloseProductForm = () => {

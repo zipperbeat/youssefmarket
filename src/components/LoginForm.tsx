@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface LoginFormProps {
   onSuccess: () => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
-  const { loginUser, registerUser, isSupabaseReady } = useApp();
+  const { loginUser, registerUser } = useApp();
   const { t } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -258,7 +259,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                 <strong>{t('demo.credentials')}:</strong>
               </p>
               <p className="text-sm text-gray-600 text-center">
-                {isSupabaseReady ? 
+                {isSupabaseConfigured() ? 
                   'Create an account in your Supabase project, or remove Supabase configuration to use demo mode with: admin@youssefmarket.com / admin123' :
                   'Demo mode active. Use: admin@youssefmarket.com / admin123 or client@example.com / client123'
                 }

@@ -31,7 +31,21 @@ function App() {
   const handleOrderSuccess = () => {
     setShowOrderForm(false);
     setToast({ type: 'success', message: 'Commande passée avec succès!' });
+    setTimeout(() => setToast(null), 3000);
   };
+
+  // Handle navigation from CategoryGrid
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#catalog') {
+        setCurrentView('catalog');
+        window.location.hash = '';
+      }
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const renderContent = () => {
     switch (currentView) {

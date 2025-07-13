@@ -62,7 +62,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [user, setUser] = useState<User | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isSupabaseReady, setIsSupabaseReady] = useState(false);
   
   const supabaseHooks = useSupabase();
 
@@ -78,7 +77,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const createOrder = async (orderData: { clientName: string; clientPhone: string; clientEmail?: string; notes?: string; items: CartItem[] }) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock create order
       const newOrder: Order = {
         id: Date.now().toString(),
@@ -86,8 +85,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         clientPhone: orderData.clientPhone,
         clientEmail: orderData.clientEmail,
         notes: orderData.notes,
-        items: orderData.items,
-        total: orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        items: orderData.items.map(item => ({
+          id: Date.now().toString() + Math.random(),
+          orderId: Date.now().toString(),
+          productId: item.product.id,
+          productName: item.product.name,
+          quantity: item.quantity,
+          unitPrice: item.product.price,
+          totalPrice: item.product.price * item.quantity,
+          createdAt: new Date().toISOString()
+        })),
+        totalAmount: orderData.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
         status: 'pending',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -106,7 +114,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const fetchOrders = async (): Promise<Order[]> => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Return mock orders
       return orders;
     }
@@ -122,7 +130,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateOrderStatus = async (orderId: string, status: Order['status']) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock update order status
       setOrders(prev => prev.map(order => 
         order.id === orderId 
@@ -142,7 +150,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const registerUser = async (userData: { name: string; email: string; password: string }): Promise<boolean> => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock registration for demo
       const newUser: User = {
         id: Date.now().toString(),
@@ -165,7 +173,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loginUser = async (email: string, password: string): Promise<boolean> => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock login for demo
       let mockUser: User;
       if (email === 'admin@youssefmarket.com' && password === 'admin123') {
@@ -218,7 +226,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const addProduct = async (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock add product
       const newProduct: Product = {
         ...productData,
@@ -240,7 +248,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateProduct = async (id: string, productData: Partial<Product>) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock update product
       setProducts(prev => prev.map(product => 
         product.id === id 
@@ -260,7 +268,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteProduct = async (id: string) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock delete product
       setProducts(prev => prev.filter(product => product.id !== id));
       return;
@@ -276,7 +284,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const addCategory = async (categoryData: Omit<Category, 'id' | 'productCount'>) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock add category
       const newCategory: Category = {
         ...categoryData,
@@ -297,7 +305,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateCategory = async (id: string, categoryData: Partial<Category>) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock update category
       setCategories(prev => prev.map(category => 
         category.id === id 
@@ -317,7 +325,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteCategory = async (id: string) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock delete category
       setCategories(prev => prev.filter(category => category.id !== id));
       return;
@@ -333,7 +341,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loadProducts = async () => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       setProducts(mockProducts);
       return;
     }
@@ -347,7 +355,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loadCategories = async () => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       setCategories(mockCategories);
       return;
     }
@@ -366,7 +374,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loadUserFavorites = async (userId: string) => {
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock favorites
       setFavorites(['1', '3']);
       return;
@@ -385,11 +393,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const initializeApp = async () => {
       setLoading(true);
       
-      // Check if Supabase is configured
-      const supabaseReady = isSupabaseConfigured();
-      setIsSupabaseReady(supabaseReady);
-      
-      if (!supabaseReady) {
+      if (!isSupabaseConfigured()) {
         // Use mock data when Supabase is not configured
         setProducts(mockProducts);
         setCategories(mockCategories);
@@ -413,7 +417,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         await loadCategories();
       } catch (error) {
         console.error('Supabase connection failed, using mock data:', error);
-        setIsSupabaseReady(false);
         setProducts(mockProducts);
         setCategories(mockCategories);
       }
@@ -462,7 +465,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addToFavorites = async (productId: string) => {
     if (!user) return;
     
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock add to favorites
       setFavorites(prev => [...prev, productId]);
       return;
@@ -479,7 +482,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const removeFromFavorites = async (productId: string) => {
     if (!user) return;
     
-    if (!isSupabaseReady) {
+    if (!isSupabaseConfigured()) {
       // Mock remove from favorites
       setFavorites(prev => prev.filter(id => id !== productId));
       return;
@@ -544,16 +547,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isClient,
       favorites,
       loading,
-      isSupabaseReady,
       setSelectedCategory,
       setSearchQuery,
       setUser,
-      addToFavorites: addToFavorites,
+      addToFavorites,
       addToCart,
       updateCartQuantity,
       removeFromCart,
       clearCart,
-      removeFromFavorites: removeFromFavorites,
+      removeFromFavorites,
       registerUser,
       loginUser,
       addProduct,
